@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, ShoppingCart, Package, Users, Truck, ClipboardList, Settings, ScanBarcode, LogOut, Building2,
+  LayoutDashboard, ShoppingCart, Package, Users, Truck, ClipboardList, Settings, ScanBarcode, LogOut, Building2, Calculator,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -17,6 +17,7 @@ const items = [
   { title: "Clients", url: "/customers", icon: Users },
   { title: "Fournisseurs", url: "/suppliers", icon: Truck },
   { title: "Achats", url: "/purchases", icon: ClipboardList },
+  { title: "Comptabilité", url: "/accounting", icon: Calculator },
   { title: "Paramètres", url: "/settings", icon: Settings },
 ];
 
