@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounts: {
+        Row: {
+          class: Database["public"]["Enums"]["account_class"]
+          code: string
+          company_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          type: string
+        }
+        Insert: {
+          class: Database["public"]["Enums"]["account_class"]
+          code: string
+          company_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          type?: string
+        }
+        Update: {
+          class?: Database["public"]["Enums"]["account_class"]
+          code?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           company_id: string
@@ -169,6 +210,153 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_entries: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          entry_date: string
+          id: string
+          journal_id: string
+          posted: boolean
+          reference: string
+          source_id: string | null
+          source_type: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          entry_date?: string
+          id?: string
+          journal_id: string
+          posted?: boolean
+          reference: string
+          source_id?: string | null
+          source_type?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          entry_date?: string
+          id?: string
+          journal_id?: string
+          posted?: boolean
+          reference?: string
+          source_id?: string | null
+          source_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_entries_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_entries_journal_id_fkey"
+            columns: ["journal_id"]
+            isOneToOne: false
+            referencedRelation: "journals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_entry_lines: {
+        Row: {
+          account_id: string
+          created_at: string
+          credit: number
+          debit: number
+          entry_id: string
+          id: string
+          label: string | null
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          entry_id: string
+          id?: string
+          label?: string | null
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          entry_id?: string
+          id?: string
+          label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_entry_lines_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_entry_lines_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journals: {
+        Row: {
+          code: string
+          company_id: string
+          created_at: string
+          default_account_id: string | null
+          id: string
+          name: string
+          type: Database["public"]["Enums"]["journal_type"]
+        }
+        Insert: {
+          code: string
+          company_id: string
+          created_at?: string
+          default_account_id?: string | null
+          id?: string
+          name: string
+          type: Database["public"]["Enums"]["journal_type"]
+        }
+        Update: {
+          code?: string
+          company_id?: string
+          created_at?: string
+          default_account_id?: string | null
+          id?: string
+          name?: string
+          type?: Database["public"]["Enums"]["journal_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journals_default_account_id_fkey"
+            columns: ["default_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -543,10 +731,16 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      seed_syscohada_accounts: {
+        Args: { _company_id: string }
+        Returns: undefined
+      }
       user_company_ids: { Args: { _user_id: string }; Returns: string[] }
     }
     Enums: {
+      account_class: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8"
       app_role: "owner" | "admin" | "cashier" | "accountant" | "stock_manager"
+      journal_type: "sales" | "purchases" | "cash" | "bank" | "misc"
       payment_method:
         | "cash"
         | "wave"
@@ -682,7 +876,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_class: ["1", "2", "3", "4", "5", "6", "7", "8"],
       app_role: ["owner", "admin", "cashier", "accountant", "stock_manager"],
+      journal_type: ["sales", "purchases", "cash", "bank", "misc"],
       payment_method: [
         "cash",
         "wave",
